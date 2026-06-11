@@ -623,6 +623,71 @@ onUnmounted(() => {
                 </button>
               </div>
             </div>
+                      <!-- marineritos -->
+            <div>
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'marineritos'" v-model="menuData.marineritos.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.marineritos.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'marineritos' ? saveCategory('marineritos') : toggleEdit('marineritos')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'marineritos' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'marineritos'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-0">
+                <li v-for="(item, index) in menuData.marineritos.items" :key="'mar'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'marineritos'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('marineritos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('marineritos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'marineritos'" @click="openAddItem('marineritos')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- Banner banner5 -->
+            <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-4 group/banner">
+              <input :id="'banner-input-banner5'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner5', $event)" />
+              <div v-if="banners.banner5" class="w-full h-full">
+                <img :src="banners.banner5.startsWith('http') ? banners.banner5 : API + banners.banner5" class="w-full h-full object-cover" alt="Banner publicitario" />
+              </div>
+              <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
+                <div class="flex flex-col items-center">
+                  <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                  <span class="text-slate-400 text-xs mt-1 font-medium">(Recomendado: 800x200 px)</span>
+                </div>
+              </div>
+              <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                <button @click="triggerBannerUpload('banner5')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
+                  <svg class="w-5 h-5 text-[#0F3057]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
+                <button v-if="banners.banner5" @click="deleteBanner('banner5')" class="w-12 h-12 bg-red-500/90 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Eliminar imagen">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Column 2: Cocteles & Especialidades -->
@@ -893,72 +958,7 @@ onUnmounted(() => {
             </div>
 
             
-            <!-- marineritos -->
-            <div>
-              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
-                <input v-if="editingCategory === 'marineritos'" v-model="menuData.marineritos.title"
-                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
-                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
-                  {{ menuData.marineritos.title }}
-                </h3>
-                <button v-if="isLoggedIn" @click="editingCategory === 'marineritos' ? saveCategory('marineritos') : toggleEdit('marineritos')"
-                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
-                  :class="editingCategory === 'marineritos' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
-                  <svg v-if="editingCategory !== 'marineritos'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                </button>
-              </div>
-              <ul class="space-y-0">
-                <li v-for="(item, index) in menuData.marineritos.items" :key="'mar'+index" class="flex flex-col">
-                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
-                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
-                      {{ formatName(item) }}
-                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
-                    </div>
-                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
-                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
-                    </div>
-                    <div v-if="editingCategory === 'marineritos'" class="flex items-center gap-1 shrink-0">
-                      <button @click="openEditItem('marineritos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                      </button>
-                      <button @click="deleteItem('marineritos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-              <button v-if="editingCategory === 'marineritos'" @click="openAddItem('marineritos')"
-                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                Agregar platillo
-              </button>
-            </div>
-
-            
-            <!-- Banner banner5 -->
-            <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-4 group/banner">
-              <input :id="'banner-input-banner5'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner5', $event)" />
-              <div v-if="banners.banner5" class="w-full h-full">
-                <img :src="banners.banner5.startsWith('http') ? banners.banner5 : API + banners.banner5" class="w-full h-full object-cover" alt="Banner publicitario" />
-              </div>
-              <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
-                <div class="flex flex-col items-center">
-                  <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
-                  <span class="text-slate-400 text-xs mt-1 font-medium">(Recomendado: 800x200 px)</span>
-                </div>
-              </div>
-              <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                <button @click="triggerBannerUpload('banner5')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
-                  <svg class="w-5 h-5 text-[#0F3057]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                </button>
-                <button v-if="banners.banner5" @click="deleteBanner('banner5')" class="w-12 h-12 bg-red-500/90 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Eliminar imagen">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-              </div>
-            </div>
-          </div>
+</div>
           
         </div>
 
