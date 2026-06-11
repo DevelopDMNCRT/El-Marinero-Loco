@@ -454,7 +454,10 @@ onUnmounted(() => {
                 <img :src="banners.banner1.startsWith('http') ? banners.banner1 : API + banners.banner1" class="w-full h-full object-cover" alt="Banner publicitario 1" />
               </div>
               <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
-                <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                <div class="flex flex-col items-center">
+                  <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                  <span class="text-slate-400 text-xs mt-1 font-medium">(Recomendado: 800x200 px)</span>
+                </div>
               </div>
 
               <!-- Edit Controls (only when logged in) -->
@@ -523,7 +526,10 @@ onUnmounted(() => {
                   <img :src="banners.banner2.startsWith('http') ? banners.banner2 : API + banners.banner2" class="w-full h-full object-cover" alt="Banner publicitario 2" />
                 </div>
                 <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
+                  <div class="flex flex-col items-center">
                   <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                  <span class="text-slate-400 text-xs mt-1 font-medium">(Recomendado: 800x200 px)</span>
+                </div>
                 </div>
                 <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
                   <button @click="triggerBannerUpload('banner2')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
@@ -587,7 +593,10 @@ onUnmounted(() => {
                   <img :src="banners.banner3.startsWith('http') ? banners.banner3 : API + banners.banner3" class="w-full h-full object-cover" alt="Banner publicitario 3" />
                 </div>
                 <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
+                  <div class="flex flex-col items-center">
                   <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                  <span class="text-slate-400 text-xs mt-1 font-medium">(Recomendado: 800x200 px)</span>
+                </div>
                 </div>
                 <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
                   <button @click="triggerBannerUpload('banner3')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
@@ -747,7 +756,10 @@ onUnmounted(() => {
                 <img :src="banners.banner4.startsWith('http') ? banners.banner4 : API + banners.banner4" class="w-full h-full object-cover" alt="Banner publicitario" />
               </div>
               <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
-                <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                <div class="flex flex-col items-center">
+                  <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                  <span class="text-slate-400 text-xs mt-1 font-medium">(Recomendado: 800x200 px)</span>
+                </div>
               </div>
               <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
                 <button @click="triggerBannerUpload('banner4')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
@@ -945,7 +957,10 @@ onUnmounted(() => {
                 <img :src="banners.banner5.startsWith('http') ? banners.banner5 : API + banners.banner5" class="w-full h-full object-cover" alt="Banner publicitario" />
               </div>
               <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
-                <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                <div class="flex flex-col items-center">
+                  <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                  <span class="text-slate-400 text-xs mt-1 font-medium">(Recomendado: 800x200 px)</span>
+                </div>
               </div>
               <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
                 <button @click="triggerBannerUpload('banner5')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
