@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const API = `http://${window.location.hostname}:3000`
+const API = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:3000`
 
 // --- Slider ---
 const currentSlide = ref(0)
