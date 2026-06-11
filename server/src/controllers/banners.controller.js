@@ -17,7 +17,7 @@ const BANNERS_DATA = path.join(__dirname, '../data/banners.json')
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'el-marinero-loco/banners', // Carpeta en Cloudinary
+    folder: 'El Marinero Loco', // Carpeta en Cloudinary
     allowed_formats: ['jpg', 'png', 'webp', 'jpeg', 'gif'],
     public_id: (req, file) => req.params.id, // El ID será banner1, banner2, etc.
   },
@@ -71,7 +71,7 @@ const deleteBanner = async (req, res) => {
     if (url && url.includes('cloudinary')) {
       // Extraer public_id de la URL de Cloudinary para eliminarlo
       // Normalmente el path completo es la carpeta + public_id
-      const publicId = `el-marinero-loco/banners/${id}`
+      const publicId = `El Marinero Loco/${id}`
       await cloudinary.uploader.destroy(publicId)
     }
 
