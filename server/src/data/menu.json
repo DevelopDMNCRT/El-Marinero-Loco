@@ -1,0 +1,371 @@
+{
+  "entradas": {
+    "title": "Entradas",
+    "items": [
+      {
+        "nombre": "Aguachile",
+        "porcion": "Orden",
+        "variacion": "Verde, Negro, Rojo",
+        "precio": 170
+      },
+      {
+        "nombre": "Aguachile Negro",
+        "porcion": "1 Lt",
+        "variacion": "Verde, Negro, Rojo",
+        "precio": 340
+      },
+      {
+        "nombre": "Aguachile Chiltepín",
+        "porcion": "Orden",
+        "variacion": null,
+        "precio": 190
+      },
+      {
+        "nombre": "Aguachile Chiltepín",
+        "porcion": "1 Lt",
+        "variacion": null,
+        "precio": 360
+      },
+      {
+        "nombre": "Balazo",
+        "porcion": "Shot",
+        "variacion": null,
+        "precio": 65
+      },
+      {
+        "nombre": "Alitas",
+        "porcion": null,
+        "variacion": "Al gusto",
+        "precio": 130
+      },
+      {
+        "nombre": "Alitas",
+        "porcion": null,
+        "variacion": "BBQ",
+        "precio": 130
+      },
+      {
+        "nombre": "Alitas",
+        "porcion": null,
+        "variacion": "Buffalo",
+        "precio": 130
+      },
+      {
+        "nombre": "Almeja Reyna Preparada",
+        "porcion": null,
+        "variacion": null,
+        "precio": 95
+      },
+      {
+        "nombre": "Camaronillas",
+        "porcion": "1 Pza",
+        "variacion": null,
+        "precio": 60
+      },
+      {
+        "nombre": "Camaronillas",
+        "porcion": "3 Pzas",
+        "variacion": null,
+        "precio": 155
+      },
+      {
+        "nombre": "Cecina",
+        "porcion": "Orden",
+        "variacion": null,
+        "precio": 180
+      },
+      {
+        "nombre": "Ceviche de Camarón",
+        "porcion": "1 Lt",
+        "variacion": null,
+        "precio": 290
+      },
+      {
+        "nombre": "Ceviche de Camarón",
+        "porcion": "Orden",
+        "variacion": null,
+        "precio": 160
+      },
+      {
+        "nombre": "Ceviche de Pescado",
+        "porcion": "1 Lt",
+        "variacion": null,
+        "precio": 220
+      },
+      {
+        "nombre": "Ceviche de Pescado",
+        "porcion": "Orden",
+        "variacion": null,
+        "precio": 115
+      },
+      {
+        "nombre": "Consomé",
+        "porcion": null,
+        "variacion": null,
+        "precio": 40
+      },
+      {
+        "nombre": "Huevera",
+        "porcion": "1 Lt",
+        "variacion": null,
+        "precio": 190
+      },
+      {
+        "nombre": "Huevera",
+        "porcion": "Orden",
+        "variacion": null,
+        "precio": 100
+      },
+      {
+        "nombre": "Marlin",
+        "porcion": "1 Lt",
+        "variacion": null,
+        "precio": 220
+      },
+      {
+        "nombre": "Marlin",
+        "porcion": "Orden",
+        "variacion": null,
+        "precio": 150
+      },
+      {
+        "nombre": "Ostiones",
+        "porcion": "1/2 Docena",
+        "variacion": null,
+        "precio": 90
+      },
+      {
+        "nombre": "Ostiones",
+        "porcion": "Docena",
+        "variacion": null,
+        "precio": 140
+      },
+      {
+        "nombre": "Papas a la Francesa",
+        "porcion": "Orden",
+        "variacion": null,
+        "precio": 70
+      },
+      {
+        "nombre": "Pata de Mula",
+        "porcion": "1/2 Docena",
+        "variacion": null,
+        "precio": 70
+      },
+      {
+        "nombre": "Pata de Mula",
+        "porcion": "Docena",
+        "variacion": null,
+        "precio": 130
+      },
+      {
+        "nombre": "Taco Gobernador",
+        "porcion": "1 Pza",
+        "variacion": null,
+        "precio": 60
+      },
+      {
+        "nombre": "Taco Gobernador",
+        "porcion": "3 Pzas",
+        "variacion": null,
+        "precio": 150
+      },
+      {
+        "nombre": "Chamorro",
+        "porcion": null,
+        "variacion": null,
+        "precio": 235
+      }
+    ]
+  },
+  "cocteles": {
+    "title": "Cocteles",
+    "items": [
+      {
+        "nombre": "Coctel de Camarón",
+        "porcion": "Chico",
+        "variacion": null,
+        "precio": 150
+      },
+      {
+        "nombre": "Coctel de Camarón",
+        "porcion": "Mediano",
+        "variacion": null,
+        "precio": 170
+      },
+      {
+        "nombre": "Coctel de Camarón",
+        "porcion": "Grande",
+        "variacion": null,
+        "precio": 195
+      },
+      {
+        "nombre": "Coctel Campechano",
+        "porcion": "Chico",
+        "variacion": null,
+        "precio": 165
+      },
+      {
+        "nombre": "Coctel Campechano",
+        "porcion": "Mediano",
+        "variacion": null,
+        "precio": 185
+      },
+      {
+        "nombre": "Coctel Campechano",
+        "porcion": "Grande",
+        "variacion": null,
+        "precio": 210
+      },
+      {
+        "nombre": "Coctel de Pulpo",
+        "porcion": "Chico",
+        "variacion": null,
+        "precio": 165
+      },
+      {
+        "nombre": "Coctel de Pulpo",
+        "porcion": "Mediano",
+        "variacion": null,
+        "precio": 185
+      },
+      {
+        "nombre": "Coctel de Pulpo",
+        "porcion": "Grande",
+        "variacion": null,
+        "precio": 215
+      },
+      {
+        "nombre": "Coctel Vuelve a la Vida",
+        "porcion": "Chico",
+        "variacion": null,
+        "precio": 180
+      },
+      {
+        "nombre": "Coctel Vuelve a la Vida",
+        "porcion": "Mediano",
+        "variacion": null,
+        "precio": 205
+      },
+      {
+        "nombre": "Coctel Vuelve a la Vida",
+        "porcion": "Grande",
+        "variacion": null,
+        "precio": 220
+      }
+    ]
+  },
+  "especialidades": {
+    "title": "Especialidades",
+    "items": [
+      {
+        "nombre": "Huachinango",
+        "porcion": null,
+        "variacion": "Al Gusto",
+        "precio": 350
+      },
+      {
+        "nombre": "Huachinango",
+        "porcion": null,
+        "variacion": "Zarandeado",
+        "precio": 360
+      },
+      {
+        "nombre": "Bagre",
+        "porcion": null,
+        "variacion": "Al Gusto",
+        "precio": 190
+      },
+      {
+        "nombre": "Bagre",
+        "porcion": null,
+        "variacion": "Zarandeado",
+        "precio": 200
+      },
+      {
+        "nombre": "Medallón de Atún",
+        "porcion": null,
+        "variacion": null,
+        "precio": 195
+      },
+      {
+        "nombre": "Mojarra",
+        "porcion": null,
+        "variacion": "Al Gusto",
+        "precio": 200
+      },
+      {
+        "nombre": "Mojarra",
+        "porcion": null,
+        "variacion": "Zarandeada",
+        "precio": 220
+      },
+      {
+        "nombre": "Molcajete",
+        "porcion": null,
+        "variacion": "Frío",
+        "precio": 260
+      },
+      {
+        "nombre": "Molcajete",
+        "porcion": null,
+        "variacion": "Mar y Tierra",
+        "precio": 280
+      },
+      {
+        "nombre": "Molcajete",
+        "porcion": null,
+        "variacion": "Mixto",
+        "precio": 280
+      },
+      {
+        "nombre": "Piña Rellena",
+        "porcion": null,
+        "variacion": null,
+        "precio": 260
+      },
+      {
+        "nombre": "Pulpo",
+        "porcion": null,
+        "variacion": "Al Gusto",
+        "precio": 265
+      },
+      {
+        "nombre": "Pulpo",
+        "porcion": null,
+        "variacion": "Zarandeado",
+        "precio": 285
+      },
+      {
+        "nombre": "Rana",
+        "porcion": null,
+        "variacion": "Al Gusto",
+        "precio": 250
+      },
+      {
+        "nombre": "Rana",
+        "porcion": null,
+        "variacion": "Zarandeada",
+        "precio": 265
+      },
+      {
+        "nombre": "Salmón",
+        "porcion": null,
+        "variacion": "Al Gusto",
+        "precio": 265
+      },
+      {
+        "nombre": "Salmón",
+        "porcion": null,
+        "variacion": "Zarandeado",
+        "precio": 285
+      },
+      {
+        "nombre": "Langosta y Cola de Langosta",
+        "porcion": "Según Tamaño",
+        "variacion": "Según Temporada",
+        "precio": "Variable"
+      }
+    ]
+  }
+}

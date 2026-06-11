@@ -1,102 +1,214 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
+const API = 'http://localhost:3000'
+
+// --- Slider ---
 const currentSlide = ref(0)
 const slides = [
   { id: 1, image: '/images/ceviche.png', title: 'Frescura del Mar', subtitle: 'El mejor ceviche de la ciudad' },
   { id: 2, image: '/images/fried_fish.png', title: 'Sabor Tradicional', subtitle: 'Pescado frito crujiente al instante' },
   { id: 3, image: '/images/seafood_platter.png', title: 'Para Compartir', subtitle: 'Mariscadas que te sorprenderán' }
 ]
-
 let slideInterval = null
+const nextSlide = () => { currentSlide.value = (currentSlide.value + 1) % slides.length }
 
-const nextSlide = () => {
-  currentSlide.value = (currentSlide.value + 1) % slides.length
+// --- Auth ---
+const showLoginModal = ref(false)
+const loginEmail = ref('')
+const loginPassword = ref('')
+const loginError = ref('')
+const loginLoading = ref(false)
+const isLoggedIn = ref(!!localStorage.getItem('ml_token'))
+
+const handleLogin = async () => {
+  loginError.value = ''
+  loginLoading.value = true
+  try {
+    const res = await fetch(`${API}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: loginEmail.value, password: loginPassword.value })
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      loginError.value = data.error || 'Error al iniciar sesión.'
+    } else {
+      localStorage.setItem('ml_token', data.token)
+      isLoggedIn.value = true
+      showLoginModal.value = false
+      loginEmail.value = ''
+      loginPassword.value = ''
+    }
+  } catch (e) {
+    loginError.value = 'No se pudo conectar con el servidor.'
+  } finally {
+    loginLoading.value = false
+  }
 }
+
+const handleLogout = () => {
+  localStorage.removeItem('ml_token')
+  isLoggedIn.value = false
+  editingCategory.value = null
+}
+
+// --- Menu Data (reactive, loaded from backend) ---
+const menuData = ref({ entradas: { title: 'Entradas', items: [] }, cocteles: { title: 'Cocteles', items: [] }, especialidades: { title: 'Especialidades', items: [] } })
+const menuLoading = ref(true)
+
+const loadMenu = async () => {
+  try {
+    const res = await fetch(`${API}/api/menu`)
+    if (res.ok) menuData.value = await res.json()
+  } catch (e) {
+    console.error('No se pudo cargar el menú:', e)
+  } finally {
+    menuLoading.value = false
+  }
+}
+
+// --- Banners ---
+const banners = ref({ banner1: null, banner2: null, banner3: null })
+
+const loadBanners = async () => {
+  try {
+    const res = await fetch(`${API}/api/banners`)
+    if (res.ok) banners.value = await res.json()
+  } catch (e) { console.error('No se pudieron cargar los banners:', e) }
+}
+
+const uploadBanner = async (id, file) => {
+  const token = localStorage.getItem('ml_token')
+  const form = new FormData()
+  form.append('image', file)
+  try {
+    const res = await fetch(`${API}/api/banners/${id}`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: form
+    })
+    const data = await res.json()
+    if (res.ok) banners.value[id] = data.url + '?t=' + Date.now()
+  } catch (e) { console.error('Error subiendo banner:', e) }
+}
+
+const deleteBanner = async (id) => {
+  const token = localStorage.getItem('ml_token')
+  try {
+    const res = await fetch(`${API}/api/banners/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    if (res.ok) banners.value[id] = null
+  } catch (e) { console.error('Error eliminando banner:', e) }
+}
+
+const triggerBannerUpload = (id) => {
+  document.getElementById(`banner-input-${id}`).click()
+}
+
+const onBannerFileChange = (id, event) => {
+  const file = event.target.files[0]
+  if (file) uploadBanner(id, file)
+  event.target.value = ''
+}
+
+// --- Edit Mode ---
+const editingCategory = ref(null) // 'entradas' | 'cocteles' | 'especialidades' | null
+const savingCategory = ref(null)
+const saveSuccess = ref(null)
+
+const toggleEdit = (cat) => {
+  editingCategory.value = editingCategory.value === cat ? null : cat
+}
+
+const saveCategory = async (cat) => {
+  savingCategory.value = cat
+  const token = localStorage.getItem('ml_token')
+  try {
+    const res = await fetch(`${API}/api/menu/${cat}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ title: menuData.value[cat].title, items: menuData.value[cat].items })
+    })
+    if (res.ok) {
+      saveSuccess.value = cat
+      setTimeout(() => { saveSuccess.value = null }, 2500)
+      editingCategory.value = null
+    }
+  } catch (e) {
+    console.error('Error guardando:', e)
+  } finally {
+    savingCategory.value = null
+  }
+}
+
+const deleteItem = (cat, index) => {
+  menuData.value[cat].items.splice(index, 1)
+}
+
+// --- Item Edit Modal ---
+const showItemModal = ref(false)
+const itemModalCat = ref(null)
+const itemModalIndex = ref(null) // null = new item
+const itemForm = ref({ nombre: '', porcion: '', variacion: '', precio: '' })
+
+const openAddItem = (cat) => {
+  itemModalCat.value = cat
+  itemModalIndex.value = null
+  itemForm.value = { nombre: '', porcion: '', variacion: '', precio: '' }
+  showItemModal.value = true
+}
+
+const openEditItem = (cat, index) => {
+  itemModalCat.value = cat
+  itemModalIndex.value = index
+  const item = menuData.value[cat].items[index]
+  itemForm.value = {
+    nombre: item.nombre || '',
+    porcion: item.porcion || '',
+    variacion: item.variacion || '',
+    precio: item.precio || ''
+  }
+  showItemModal.value = true
+}
+
+const saveItemModal = () => {
+  const cat = itemModalCat.value
+  const newItem = {
+    nombre: itemForm.value.nombre.trim(),
+    porcion: itemForm.value.porcion.trim() || null,
+    variacion: itemForm.value.variacion.trim() || null,
+    precio: isNaN(Number(itemForm.value.precio)) ? itemForm.value.precio : Number(itemForm.value.precio)
+  }
+  if (!newItem.nombre) return
+  if (itemModalIndex.value === null) {
+    menuData.value[cat].items.push(newItem)
+  } else {
+    menuData.value[cat].items[itemModalIndex.value] = newItem
+  }
+  showItemModal.value = false
+}
+
+// --- Helpers ---
+const formatName = (item) => {
+  let text = item.nombre
+  if (item.porcion) text += ` ${item.porcion}`
+  return text.toUpperCase()
+}
+
+const categories = ['entradas', 'cocteles', 'especialidades']
 
 onMounted(() => {
   slideInterval = setInterval(nextSlide, 5000)
+  loadMenu()
+  loadBanners()
 })
 
 onUnmounted(() => {
   if (slideInterval) clearInterval(slideInterval)
 })
-
-const menuData = {
-  entradas: [
-    { nombre: "Aguachile", porcion: "Orden", variacion: "Verde, Negro, Rojo", precio: 170 },
-    { nombre: "Aguachile Negro", porcion: "1 Lt", variacion: "Verde, Negro, Rojo", precio: 340 },
-    { nombre: "Aguachile Chiltepín", porcion: "Orden", variacion: null, precio: 190 },
-    { nombre: "Aguachile Chiltepín", porcion: "1 Lt", variacion: null, precio: 360 },
-    { nombre: "Balazo", porcion: "Shot", variacion: null, precio: 65 },
-    { nombre: "Alitas", porcion: null, variacion: "Al gusto", precio: 130 },
-    { nombre: "Alitas", porcion: null, variacion: "BBQ", precio: 130 },
-    { nombre: "Alitas", porcion: null, variacion: "Buffalo", precio: 130 },
-    { nombre: "Almeja Reyna Preparada", porcion: null, variacion: null, precio: 95 },
-    { nombre: "Camaronillas", porcion: "1 Pza", variacion: null, precio: 60 },
-    { nombre: "Camaronillas", porcion: "3 Pzas", variacion: null, precio: 155 },
-    { nombre: "Cecina", porcion: "Orden", variacion: null, precio: 180 },
-    { nombre: "Ceviche de Camarón", porcion: "1 Lt", variacion: null, precio: 290 },
-    { nombre: "Ceviche de Camarón", porcion: "Orden", variacion: null, precio: 160 },
-    { nombre: "Ceviche de Pescado", porcion: "1 Lt", variacion: null, precio: 220 },
-    { nombre: "Ceviche de Pescado", porcion: "Orden", variacion: null, precio: 115 },
-    { nombre: "Consomé", porcion: null, variacion: null, precio: 40 },
-    { nombre: "Huevera", porcion: "1 Lt", variacion: null, precio: 190 },
-    { nombre: "Huevera", porcion: "Orden", variacion: null, precio: 100 },
-    { nombre: "Marlin", porcion: "1 Lt", variacion: null, precio: 220 },
-    { nombre: "Marlin", porcion: "Orden", variacion: null, precio: 150 },
-    { nombre: "Ostiones", porcion: "1/2 Docena", variacion: null, precio: 90 },
-    { nombre: "Ostiones", porcion: "Docena", variacion: null, precio: 140 },
-    { nombre: "Papas a la Francesa", porcion: "Orden", variacion: null, precio: 70 },
-    { nombre: "Pata de Mula", porcion: "1/2 Docena", variacion: null, precio: 70 },
-    { nombre: "Pata de Mula", porcion: "Docena", variacion: null, precio: 130 },
-    { nombre: "Taco Gobernador", porcion: "1 Pza", variacion: null, precio: 60 },
-    { nombre: "Taco Gobernador", porcion: "3 Pzas", variacion: null, precio: 150 },
-    { nombre: "Chamorro", porcion: null, variacion: null, precio: 235 }
-  ],
-  cocteles: [
-    { nombre: "Coctel de Camarón", porcion: "Chico", variacion: null, precio: 150 },
-    { nombre: "Coctel de Camarón", porcion: "Mediano", variacion: null, precio: 170 },
-    { nombre: "Coctel de Camarón", porcion: "Grande", variacion: null, precio: 195 },
-    { nombre: "Coctel Campechano", porcion: "Chico", variacion: null, precio: 165 },
-    { nombre: "Coctel Campechano", porcion: "Mediano", variacion: null, precio: 185 },
-    { nombre: "Coctel Campechano", porcion: "Grande", variacion: null, precio: 210 },
-    { nombre: "Coctel de Pulpo", porcion: "Chico", variacion: null, precio: 165 },
-    { nombre: "Coctel de Pulpo", porcion: "Mediano", variacion: null, precio: 185 },
-    { nombre: "Coctel de Pulpo", porcion: "Grande", variacion: null, precio: 215 },
-    { nombre: "Coctel Vuelve a la Vida", porcion: "Chico", variacion: null, precio: 180 },
-    { nombre: "Coctel Vuelve a la Vida", porcion: "Mediano", variacion: null, precio: 205 },
-    { nombre: "Coctel Vuelve a la Vida", porcion: "Grande", variacion: null, precio: 220 }
-  ],
-  especialidades: [
-    { nombre: "Huachinango", porcion: null, variacion: "Al Gusto", precio: 350 },
-    { nombre: "Huachinango", porcion: null, variacion: "Zarandeado", precio: 360 },
-    { nombre: "Bagre", porcion: null, variacion: "Al Gusto", precio: 190 },
-    { nombre: "Bagre", porcion: null, variacion: "Zarandeado", precio: 200 },
-    { nombre: "Medallón de Atún", porcion: null, variacion: null, precio: 195 },
-    { nombre: "Mojarra", porcion: null, variacion: "Al Gusto", precio: 200 },
-    { nombre: "Mojarra", porcion: null, variacion: "Zarandeada", precio: 220 },
-    { nombre: "Molcajete", porcion: null, variacion: "Frío", precio: 260 },
-    { nombre: "Molcajete", porcion: null, variacion: "Mar y Tierra", precio: 280 },
-    { nombre: "Molcajete", porcion: null, variacion: "Mixto", precio: 280 },
-    { nombre: "Piña Rellena", porcion: null, variacion: null, precio: 260 },
-    { nombre: "Pulpo", porcion: null, variacion: "Al Gusto", precio: 265 },
-    { nombre: "Pulpo", porcion: null, variacion: "Zarandeado", precio: 285 },
-    { nombre: "Rana", porcion: null, variacion: "Al Gusto", precio: 250 },
-    { nombre: "Rana", porcion: null, variacion: "Zarandeada", precio: 265 },
-    { nombre: "Salmón", porcion: null, variacion: "Al Gusto", precio: 265 },
-    { nombre: "Salmón", porcion: null, variacion: "Zarandeado", precio: 285 },
-    { nombre: "Langosta y Cola de Langosta", porcion: "Según Tamaño", variacion: "Según Temporada", precio: "Variable" }
-  ]
-}
-
-const formatName = (item) => {
-  let text = item.nombre;
-  if (item.porcion) {
-    text += ` ${item.porcion}`;
-  }
-  return text.toUpperCase();
-}
 </script>
 
 <template>
@@ -116,10 +228,23 @@ const formatName = (item) => {
           <!-- Spacer to center navigation -->
           <div class="ml-24 md:ml-36 flex-shrink-0 flex items-center">
           </div>
-          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+          <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-8">
             <a href="#inicio" class="text-slate-900 hover:text-[#38B6FF] inline-flex items-center px-1 pt-1 font-medium transition-colors">Inicio</a>
             <a href="#carta" class="text-slate-900 hover:text-[#38B6FF] inline-flex items-center px-1 pt-1 font-medium transition-colors">Carta</a>
             <a href="#contacto" class="text-slate-900 hover:text-[#38B6FF] inline-flex items-center px-1 pt-1 font-medium transition-colors">Contacto</a>
+            
+            <!-- User Icon -->
+            <button v-if="!isLoggedIn" @click="showLoginModal = true" class="text-[#0F3057] hover:text-[#38B6FF] transition-colors pl-4 focus:outline-none flex items-center justify-center" title="Iniciar sesión">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </button>
+            <button v-else @click="handleLogout" class="text-[#38B6FF] hover:text-red-500 transition-colors pl-4 focus:outline-none flex items-center gap-1 text-sm font-medium" title="Cerrar sesión">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+              </svg>
+              Salir
+            </button>
           </div>
         </div>
       </div>
@@ -159,8 +284,17 @@ const formatName = (item) => {
     </section>
 
     <!-- Menu Section -->
-    <section id="carta" class="py-16 bg-[#38B6FF]">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="carta" class="py-16 bg-gradient-to-b from-[#38B6FF] via-[#00587A] to-[#0F3057] relative overflow-hidden">
+      <!-- Bubbles -->
+      <div class="absolute inset-0 pointer-events-none z-0">
+        <div class="bubble absolute bottom-[-5%] left-[10%] w-6 h-6 rounded-full border border-white/30 bg-white/10" style="animation-duration: 15s; animation-delay: 0s;"></div>
+        <div class="bubble absolute bottom-[-5%] left-[25%] w-8 h-8 rounded-full border border-white/20 bg-white/5" style="animation-duration: 25s; animation-delay: 2s;"></div>
+        <div class="bubble absolute bottom-[-5%] left-[50%] w-4 h-4 rounded-full border border-white/30 bg-white/10" style="animation-duration: 20s; animation-delay: 5s;"></div>
+        <div class="bubble absolute bottom-[-5%] left-[75%] w-10 h-10 rounded-full border border-white/20 bg-white/5" style="animation-duration: 30s; animation-delay: 1s;"></div>
+        <div class="bubble absolute bottom-[-5%] left-[85%] w-5 h-5 rounded-full border border-white/30 bg-white/10" style="animation-duration: 18s; animation-delay: 7s;"></div>
+      </div>
+
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div class="text-center mb-12">
           <h2 class="text-5xl md:text-7xl font-extrabold text-white italic tracking-wide" style="font-family: 'Brush Script MT', cursive, sans-serif;">Menú</h2>
@@ -171,64 +305,264 @@ const formatName = (item) => {
           
           <!-- Column 1: Entradas -->
           <div>
-            <h3 class="text-4xl font-black text-[#E65100] mb-6 uppercase tracking-wider text-center lg:text-left drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">Entradas</h3>
+            <!-- Category Header -->
+            <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <input v-if="editingCategory === 'entradas'" v-model="menuData.entradas.title"
+                class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md"
+                style="[text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]" />
+              <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                {{ menuData.entradas.title }}
+              </h3>
+              <button v-if="isLoggedIn" @click="editingCategory === 'entradas' ? saveCategory('entradas') : toggleEdit('entradas')"
+                class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                :class="editingCategory === 'entradas' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'"
+                :title="editingCategory === 'entradas' ? 'Guardar cambios' : 'Editar categoría'">
+                <svg v-if="editingCategory !== 'entradas'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              </button>
+            </div>
+
             <ul class="space-y-2">
-              <li v-for="(item, index) in menuData.entradas" :key="'ent-'+index" class="flex flex-col">
-                <div class="flex justify-between items-end border-b border-white/20 pb-1">
-                  <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight pr-4">
+              <li v-for="(item, index) in menuData.entradas.items" :key="'ent-'+index" class="group/row flex flex-col">
+                <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2"
+                  :class="editingCategory === 'entradas' ? 'hover:bg-white/5 rounded px-1 cursor-pointer' : ''">
+                  <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
                     {{ formatName(item) }}
                     <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
                   </div>
                   <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
                     {{ typeof item.precio === 'number' ? `$${item.precio}` : item.precio }}
                   </div>
+                  <!-- Edit/Delete row actions -->
+                  <div v-if="editingCategory === 'entradas'" class="flex items-center gap-1 shrink-0">
+                    <button @click="openEditItem('entradas', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors" title="Editar">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                    </button>
+                    <button @click="deleteItem('entradas', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors" title="Eliminar">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                  </div>
                 </div>
               </li>
             </ul>
+
+            <!-- Add item button -->
+            <button v-if="editingCategory === 'entradas'" @click="openAddItem('entradas')"
+              class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              Agregar platillo
+            </button>
+
+            <!-- Banner 1 -->
+            <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-10 group/banner">
+              <!-- Hidden file input -->
+              <input :id="'banner-input-banner1'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner1', $event)" />
+              
+              <!-- Image or placeholder -->
+              <div v-if="banners.banner1" class="w-full h-full">
+                <img :src="API + banners.banner1" class="w-full h-full object-cover" alt="Banner publicitario 1" />
+              </div>
+              <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
+                <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+              </div>
+
+              <!-- Edit Controls (only when logged in) -->
+              <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                <button @click="triggerBannerUpload('banner1')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
+                  <svg class="w-5 h-5 text-[#0F3057]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
+                <button v-if="banners.banner1" @click="deleteBanner('banner1')" class="w-12 h-12 bg-red-500/90 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Eliminar imagen">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Column 2: Cocteles & Especialidades -->
           <div class="flex flex-col space-y-12">
+
             <!-- Cocteles -->
             <div>
-              <h3 class="text-4xl font-black text-[#E65100] mb-6 uppercase tracking-wider text-center lg:text-left drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">Cocteles</h3>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'cocteles'" v-model="menuData.cocteles.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.cocteles.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'cocteles' ? saveCategory('cocteles') : toggleEdit('cocteles')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'cocteles' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'cocteles'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+
               <ul class="space-y-2">
-                <li v-for="(item, index) in menuData.cocteles" :key="'coc-'+index" class="flex flex-col">
-                  <div class="flex justify-between items-end border-b border-white/20 pb-1">
-                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight pr-4">
+                <li v-for="(item, index) in menuData.cocteles.items" :key="'coc-'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
                       {{ formatName(item) }}
                       <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
                     </div>
                     <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
                       {{ typeof item.precio === 'number' ? `$${item.precio}` : item.precio }}
                     </div>
+                    <div v-if="editingCategory === 'cocteles'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('cocteles', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('cocteles', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
                   </div>
                 </li>
               </ul>
+
+              <button v-if="editingCategory === 'cocteles'" @click="openAddItem('cocteles')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+
+              <!-- Banner 2 -->
+              <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-10 group/banner">
+                <input :id="'banner-input-banner2'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner2', $event)" />
+                <div v-if="banners.banner2" class="w-full h-full">
+                  <img :src="API + banners.banner2" class="w-full h-full object-cover" alt="Banner publicitario 2" />
+                </div>
+                <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
+                  <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                </div>
+                <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                  <button @click="triggerBannerUpload('banner2')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
+                    <svg class="w-5 h-5 text-[#0F3057]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  </button>
+                  <button v-if="banners.banner2" @click="deleteBanner('banner2')" class="w-12 h-12 bg-red-500/90 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Eliminar imagen">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  </button>
+                </div>
+              </div>
             </div>
 
             <!-- Especialidades -->
             <div>
-              <h3 class="text-4xl font-black text-[#E65100] mb-6 uppercase tracking-wider text-center lg:text-left drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">Especialidades</h3>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'especialidades'" v-model="menuData.especialidades.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.especialidades.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'especialidades' ? saveCategory('especialidades') : toggleEdit('especialidades')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'especialidades' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'especialidades'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+
               <ul class="space-y-2">
-                <li v-for="(item, index) in menuData.especialidades" :key="'esp-'+index" class="flex flex-col">
-                  <div class="flex justify-between items-end border-b border-white/20 pb-1">
-                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight pr-4">
+                <li v-for="(item, index) in menuData.especialidades.items" :key="'esp-'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
                       {{ formatName(item) }}
                       <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
                     </div>
                     <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
                       {{ typeof item.precio === 'number' ? `$${item.precio}` : item.precio }}
                     </div>
+                    <div v-if="editingCategory === 'especialidades'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('especialidades', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('especialidades', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
                   </div>
                 </li>
               </ul>
+
+              <button v-if="editingCategory === 'especialidades'" @click="openAddItem('especialidades')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+
+              <!-- Banner 3 -->
+              <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-10 group/banner">
+                <input :id="'banner-input-banner3'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner3', $event)" />
+                <div v-if="banners.banner3" class="w-full h-full">
+                  <img :src="API + banners.banner3" class="w-full h-full object-cover" alt="Banner publicitario 3" />
+                </div>
+                <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
+                  <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+                </div>
+                <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                  <button @click="triggerBannerUpload('banner3')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
+                    <svg class="w-5 h-5 text-[#0F3057]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  </button>
+                  <button v-if="banners.banner3" @click="deleteBanner('banner3')" class="w-12 h-12 bg-red-500/90 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Eliminar imagen">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
           
         </div>
       </div>
     </section>
+
+    <!-- Item Edit Modal -->
+    <div v-if="showItemModal" class="fixed inset-0 z-[110] flex items-center justify-center px-4">
+      <div class="absolute inset-0 bg-[#0F3057]/80 backdrop-blur-sm" @click="showItemModal = false"></div>
+      <div class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-[#38B6FF] to-[#00587A] px-8 py-5 flex items-center justify-between">
+          <h3 class="text-xl font-black text-white uppercase tracking-wide">
+            {{ itemModalIndex === null ? 'Agregar Platillo' : 'Editar Platillo' }}
+          </h3>
+          <button @click="showItemModal = false" class="text-white/70 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+        <!-- Form -->
+        <div class="p-8">
+          <form @submit.prevent="saveItemModal" class="space-y-4">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre <span class="text-red-500">*</span></label>
+              <input v-model="itemForm.nombre" type="text" required
+                class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#38B6FF] focus:ring-2 focus:ring-[#38B6FF]/20 transition-colors outline-none"
+                placeholder="Ej: Ceviche de Camarón" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1">Porción <span class="text-slate-400 font-normal">(opcional)</span></label>
+              <input v-model="itemForm.porcion" type="text"
+                class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#38B6FF] focus:ring-2 focus:ring-[#38B6FF]/20 transition-colors outline-none"
+                placeholder="Ej: Orden, 1 Lt, Chico..." />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1">Variación <span class="text-slate-400 font-normal">(opcional)</span></label>
+              <input v-model="itemForm.variacion" type="text"
+                class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#38B6FF] focus:ring-2 focus:ring-[#38B6FF]/20 transition-colors outline-none"
+                placeholder="Ej: Verde, Negro, Rojo..." />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1">Precio <span class="text-red-500">*</span></label>
+              <input v-model="itemForm.precio" required
+                class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#38B6FF] focus:ring-2 focus:ring-[#38B6FF]/20 transition-colors outline-none"
+                placeholder="Ej: 150 o Variable" />
+            </div>
+            <button type="submit"
+              class="w-full bg-[#0F3057] hover:bg-[#0a2040] text-white font-bold py-4 rounded-xl transition-colors shadow-lg mt-2 flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              Guardar Platillo
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <!-- Contact Section -->
     <section id="contacto" class="py-24 bg-white relative flex flex-col items-center">
@@ -308,5 +642,79 @@ const formatName = (item) => {
         <p>© 2026 Todos los derechos reservados.</p>
       </div>
     </footer>
+
+    <!-- Login Modal -->
+    <div v-if="showLoginModal" class="fixed inset-0 z-[100] flex items-center justify-center px-4">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-[#0F3057]/80 backdrop-blur-sm" @click="showLoginModal = false"></div>
+      
+      <!-- Modal Content -->
+      <div class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-visible mt-12">
+        <!-- Shield/Badge Header -->
+        <div class="bg-gradient-to-b from-[#38B6FF] to-[#00587A] pt-14 pb-6 px-8 relative flex flex-col items-center rounded-t-3xl">
+          <button @click="showLoginModal = false" class="absolute top-4 right-4 text-white/70 hover:text-white transition-colors focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+          
+          <div class="absolute -top-12 bg-white p-2 rounded-full shadow-[0_10px_25px_rgba(0,0,0,0.15)] border border-slate-100">
+            <div class="w-24 h-24 rounded-full overflow-hidden bg-white flex items-center justify-center">
+              <img src="/images/logo.png" alt="El Marinero Loco Logo" class="w-full h-full object-cover" />
+            </div>
+          </div>
+          
+          <h3 class="text-2xl font-black text-white tracking-wide uppercase drop-shadow-md">Acceso</h3>
+        </div>
+        
+        <!-- Form -->
+        <div class="p-8">
+          <form @submit.prevent="handleLogin" class="space-y-6">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">Correo Electrónico</label>
+              <input v-model="loginEmail" type="email" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#38B6FF] focus:ring-2 focus:ring-[#38B6FF]/20 transition-colors outline-none" placeholder="correo@elmarineroloco.com" required />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">Contraseña</label>
+              <input v-model="loginPassword" type="password" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#38B6FF] focus:ring-2 focus:ring-[#38B6FF]/20 transition-colors outline-none" placeholder="••••••••" required />
+            </div>
+
+            <!-- Error message -->
+            <p v-if="loginError" class="text-red-500 text-sm text-center font-medium -mt-2">{{ loginError }}</p>
+            
+            <button type="submit" :disabled="loginLoading" class="w-full bg-[#E65100] hover:bg-[#cc4800] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-colors shadow-lg shadow-[#E65100]/30 uppercase tracking-widest mt-4">
+              {{ loginLoading ? 'Verificando...' : 'Iniciar Sesión' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
+
+<style scoped>
+@keyframes float {
+  0% {
+    bottom: -5%;
+    transform: translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(20px);
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    bottom: 105%;
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+}
+
+.bubble {
+  animation: float linear infinite;
+}
+</style>
