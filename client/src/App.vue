@@ -1769,7 +1769,7 @@ onUnmounted(() => {
         <p class="text-xl text-slate-600 mb-12 max-w-2xl mx-auto">Reserva tu mesa o haznos un pedido especial. ¡Te esperamos!</p>
         
         <!-- Main WhatsApp CTA -->
-        <a href="https://wa.me/525551234567" target="_blank" rel="noopener noreferrer" 
+        <a href="https://wa.me/5213511092057" target="_blank" rel="noopener noreferrer" 
            class="group relative inline-flex items-center justify-center px-8 py-5 text-2xl font-bold text-white transition-all duration-300 transform hover:scale-105 hover:-rotate-1 mb-16">
           <div class="absolute inset-0 bg-[#25D366] rounded-2xl shadow-[0_15px_30px_rgba(37,211,102,0.3)] transition-all duration-300 group-hover:shadow-[0_20px_40px_rgba(37,211,102,0.4)]"></div>
           <div class="absolute inset-0 border-4 border-slate-900 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity"></div>
