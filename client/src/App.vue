@@ -25,23 +25,18 @@ const handleLogin = async () => {
   loginError.value = ''
   loginLoading.value = true
   try {
-    const res = await fetch(`${API}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: loginEmail.value, password: loginPassword.value })
-    })
-    const data = await res.json()
-    if (!res.ok) {
-      loginError.value = data.error || 'Error al iniciar sesión.'
-    } else {
-      localStorage.setItem('ml_token', data.token)
+    await new Promise(r => setTimeout(r, 600)) // simula pequeña espera
+    if (loginEmail.value === 'yay@ejemplo.com' && loginPassword.value === 'astro23') {
+      localStorage.setItem('ml_token', 'hardcoded-admin-token')
       isLoggedIn.value = true
       showLoginModal.value = false
       loginEmail.value = ''
       loginPassword.value = ''
+    } else {
+      loginError.value = 'Correo o contraseña incorrectos.'
     }
   } catch (e) {
-    loginError.value = 'No se pudo conectar con el servidor.'
+    loginError.value = 'Ocurrió un error inesperado.'
   } finally {
     loginLoading.value = false
   }
@@ -54,13 +49,267 @@ const handleLogout = () => {
 }
 
 // --- Menu Data (reactive, loaded from backend) ---
-const menuData = ref({ entradas: { title: 'Entradas', items: [] }, cocteles: { title: 'Cocteles', items: [] }, especialidades: { title: 'Especialidades', items: [] } })
+const menuData = ref({
+  entradas: { title: 'Entradas', items: [] },
+  cocteles: { title: 'Cocteles', items: [] },
+  especialidades: { title: 'Especialidades', items: [] },
+  torres: { title: 'Torres', items: [
+    { nombre: 'Torre Coral', precio: 260 },
+    { nombre: 'Torre Isla', precio: 280 }
+  ]},
+  camarones: { title: 'Camarones', items: [
+    { nombre: 'Camarones ½ Diabla', precio: 205 },
+    { nombre: 'Camarones 4 Quesos', precio: 250 },
+    { nombre: 'Camarones a la Diabla', precio: 205 },
+    { nombre: 'Camarones a la Oliva', precio: 250 },
+    { nombre: 'Camarones al Ajillo', precio: 205 },
+    { nombre: 'Camarones al Cocolizo', precio: 250 },
+    { nombre: 'Camarones al Gusto', precio: 205 },
+    { nombre: 'Camarones al Marinero', precio: 250 },
+    { nombre: 'Camarones al Popeye', precio: 250 },
+    { nombre: 'Camarones al Zamorano', precio: 250 },
+    { nombre: 'Camarones Empanizados', precio: 205 },
+    { nombre: 'Camarones Mantequilla', precio: 205 },
+    { nombre: 'Camarones Zarandeados', precio: 250 }
+  ]},
+  caldos: { title: 'Caldos', items: [
+    { nombre: 'Caldo de Camarón y Pulpo', precio: 225 },
+    { nombre: 'Caldo de Bagre', precio: 190 },
+    { nombre: 'Caldo de Camarón', precio: 205 },
+    { nombre: 'Caldo de Mariscos', precio: 250 },
+    { nombre: 'Caldo de Rana', precio: 205 }
+  ]},
+  filetes: { title: 'Filetes', items: [
+    { nombre: 'Filete a la Diabla', precio: 185 },
+    { nombre: 'Filete a la Mantequilla', precio: 185 },
+    { nombre: 'Filete al Ajillo', precio: 185 },
+    { nombre: 'Filete Empanizado', precio: 185 },
+    { nombre: 'Filete Empapelado', precio: 240 },
+    { nombre: 'Filete de Pescado al Gusto', precio: 185 },
+    { nombre: 'Filete Zarandeado', precio: 205 },
+    { nombre: 'Filete de Pollo Zarandeado', precio: 205 },
+    { nombre: 'Filete de Pollo a la Plancha', precio: 185 },
+    { nombre: 'Filete de Pollo Empanizado', precio: 185 }
+  ]},
+  tostadas: { title: 'Tostadas', items: [
+    { nombre: 'Aguachile Chiltepin', precio: 85 },
+    { nombre: 'Aguachile Verde, Negro y Rojo', precio: 75 },
+    { nombre: 'Ceviche de Camarón', precio: 60 },
+    { nombre: 'Ceviche de Pescado', precio: 40 },
+    { nombre: 'Camarón Cocido', precio: 75 },
+    { nombre: 'Marlin', precio: 45 },
+    { nombre: 'Huevera', precio: 35 },
+    { nombre: 'Pulpo', precio: 85 },
+    { nombre: 'Pulpo a la Diabla', precio: 95 }
+  ]},
+  cortes: { title: 'Cortes', items: [
+    { nombre: 'Corte Arrachera', precio: 235 },
+    { nombre: 'Corte New York', precio: 275 },
+    { nombre: 'Corte Picaña', precio: 295 },
+    { nombre: 'Corte Rib Eye', precio: 305 },
+    { nombre: 'Corte T-Bone', precio: 265 },
+    { nombre: 'Corte Tomahawk 1.200 K', precio: 950 }
+  ]},
+  marineritos: { title: 'Marineritos', items: [
+    { nombre: 'Camarón Empanizado Niño', precio: 115 },
+    { nombre: 'Dedos de Queso', precio: 115 },
+    { nombre: 'Filete Empanizado Niño', precio: 115 },
+    { nombre: 'Hamburguesa con Papas', precio: 115 },
+    { nombre: 'Nuggets con Papas', precio: 115 }
+  ]},
+  cerveza: { title: 'Cerveza', items: [
+    { nombre: 'Bohemia Ambar', precio: 38 },
+    { nombre: 'Bohemia Clara', precio: 38 },
+    { nombre: 'Caguama', precio: 90 },
+    { nombre: 'Chelada', precio: 55 },
+    { nombre: 'Clamato Preparado', precio: 40 },
+    { nombre: 'Corona Clara', precio: 35 },
+    { nombre: 'Corona Oscura', precio: 35 },
+    { nombre: 'Cubana', precio: 55 },
+    { nombre: 'Cubeta Corona 10 Pzas', precio: 350 },
+    { nombre: 'Cubeta Coronita 10 Pzas', precio: 250 },
+    { nombre: 'Cubeta Modelo Especial', precio: 450 },
+    { nombre: 'Cubeta Negra Modelo', precio: 450 },
+    { nombre: 'Cubeta Ultra', precio: 450 },
+    { nombre: 'Indio', precio: 30 },
+    { nombre: 'Michelada', precio: 65 },
+    { nombre: 'Modelo Negra', precio: 45 },
+    { nombre: 'Modelo Ultra', precio: 45 },
+    { nombre: 'Pacifico', precio: 35 },
+    { nombre: 'Tecate Light', precio: 30 },
+    { nombre: 'Tecate XX Ambar', precio: 30 },
+    { nombre: 'Tecate XX Lager', precio: 30 },
+    { nombre: 'Victoria', precio: 35 }
+  ]},
+  refrescos: { title: 'Refrescos', items: [
+    { nombre: 'Boost', precio: 50 },
+    { nombre: 'Coca Cola Lata', precio: 35 },
+    { nombre: 'Coca Cola Light Lata', precio: 35 },
+    { nombre: 'Coca Cola Vidrio', precio: 28 },
+    { nombre: 'Coca Cola Zero Lata', precio: 35 },
+    { nombre: 'Fanta Vidrio', precio: 28 },
+    { nombre: 'Red Bull', precio: 70 },
+    { nombre: 'Sidral Vidrio', precio: 28 },
+    { nombre: 'Sprite Vidrio', precio: 28 },
+    { nombre: 'Squirt', precio: 28 },
+    { nombre: 'Zuba', precio: 28 }
+  ]},
+  sinalcohol: { title: 'Sin Alcohol', items: [
+    { nombre: 'Canica', precio: 50 },
+    { nombre: 'Conga', precio: 60 },
+    { nombre: 'Pantera Rosa', precio: 60 },
+    { nombre: 'Piñada', precio: 60 }
+  ]},
+  mezcales: { title: 'Mezcales', items: [
+    { nombre: 'Botella 400 Conejos', precio: 950 },
+    { nombre: 'Botella Union', precio: 950 },
+    { nombre: 'Copa 400 Conejos', precio: 85 },
+    { nombre: 'Copa Union', precio: 85 }
+  ]},
+  ron: { title: 'Ron', items: [
+    { nombre: 'Botella Bacardi Añejo', precio: 850 },
+    { nombre: 'Botella Bacardi Blanco', precio: 700 },
+    { nombre: 'Botella Bacardi Zacapa', precio: 1600 },
+    { nombre: 'Copa Barcadi Añejo', precio: 80 },
+    { nombre: 'Copa Bacardi Blanco', precio: 60 },
+    { nombre: 'Copa Bacardi Zacapa', precio: 140 }
+  ]},
+  brandy: { title: 'Brandy', items: [
+    { nombre: 'Botella Torres 10', precio: 950 },
+    { nombre: 'Botella Torres 20', precio: 1600 },
+    { nombre: 'Botella Torres 5', precio: 700 },
+    { nombre: 'Copa Torres 10', precio: 90 },
+    { nombre: 'Copa Torres 20', precio: 140 },
+    { nombre: 'Copa Torres 5', precio: 65 }
+  ]},
+  bebidas: { title: 'Bebidas', items: [
+    { nombre: 'Agua Horchata Jarra', precio: 110 },
+    { nombre: 'Agua Horchata Vaso', precio: 40 },
+    { nombre: 'Agua Jamaica Jarra', precio: 110 },
+    { nombre: 'Agua Jamaica Vaso', precio: 40 },
+    { nombre: 'Agua Natural Botella', precio: 20 },
+    { nombre: 'Agua Tamarindo Jarra', precio: 110 },
+    { nombre: 'Agua Tamarindo Vaso', precio: 40 },
+    { nombre: 'Limonada Jarra', precio: 120 },
+    { nombre: 'Limonada Vaso', precio: 50 },
+    { nombre: 'Limonada Natural Jarra', precio: 110 },
+    { nombre: 'Limonada Natural Vaso', precio: 40 },
+    { nombre: 'Naranjada Jarra', precio: 120 },
+    { nombre: 'Naranjada Vaso', precio: 50 },
+    { nombre: 'Naranjada Natural Jarra', precio: 110 },
+    { nombre: 'Naranjada Natural Vaso', precio: 40 },
+    { nombre: 'Naranjada Maracuya Jarra', precio: 145 },
+    { nombre: 'Naranjada Maracuya Litro', precio: 95 },
+    { nombre: 'Naranjada Maracuya Vaso', precio: 65 },
+    { nombre: 'Limonada Frutos Rojos Jarra', precio: 145 },
+    { nombre: 'Limonada Frutos Rojos Litro', precio: 95 },
+    { nombre: 'Limonada Frutos Rojos Vaso', precio: 65 }
+  ]},
+  tequilas: { title: 'Tequilas', items: [
+    { nombre: 'Botella 1800 Bco', precio: 1150 },
+    { nombre: 'Botella 1800 Cristalino', precio: 1450 },
+    { nombre: 'Botella 1800 Reposado', precio: 1200 },
+    { nombre: 'Botella 7 Leguas Blanco', precio: 1250 },
+    { nombre: 'Botella Centenario Añejo', precio: 1250 },
+    { nombre: 'Botella Centenario Plata', precio: 950 },
+    { nombre: 'Botella Centenario Reposado', precio: 950 },
+    { nombre: 'Botella Don Julio 70', precio: 1650 },
+    { nombre: 'Botella Don Julio Blanco', precio: 1250 },
+    { nombre: 'Botella Dos Oros', precio: 950 },
+    { nombre: 'Botella Herradura Ultra', precio: 1600 },
+    { nombre: 'Botella Maestro Dobel', precio: 1450 },
+    { nombre: 'Botella San Matias Cristalino', precio: 1250 },
+    { nombre: 'Copa 1800 Bco', precio: 110 },
+    { nombre: 'Copa 1800 Cristalino', precio: 145 },
+    { nombre: 'Copa 1800 Reposado', precio: 115 },
+    { nombre: 'Copa 7 Leguas Blanco', precio: 125 },
+    { nombre: 'Copa Centenario Plata', precio: 95 },
+    { nombre: 'Copa Centenario Añejo', precio: 125 },
+    { nombre: 'Copa Centenario Reposado', precio: 95 },
+    { nombre: 'Copa Don Julio 70', precio: 165 },
+    { nombre: 'Copa Don Julio Blanco', precio: 125 },
+    { nombre: 'Copa Dos Oros', precio: 90 },
+    { nombre: 'Copa Herradura Ultra', precio: 160 },
+    { nombre: 'Copa Maestro Dobel', precio: 150 },
+    { nombre: 'Copa San Matias Cristalino', precio: 90 }
+  ]},
+  whisky: { title: 'Whisky', items: [
+    { nombre: 'Botella Old Parr', precio: 1450 },
+    { nombre: 'Botella Black Label', precio: 1550 },
+    { nombre: 'Botella Buchanans 12', precio: 1350 },
+    { nombre: 'Botella Buchanans 18', precio: 2650 },
+    { nombre: 'Botella Martel VSOP', precio: 1750 },
+    { nombre: 'Botella Red Label', precio: 950 },
+    { nombre: 'Botella Remmy Marti VSOP', precio: 1600 },
+    { nombre: 'Copa Black Label', precio: 155 },
+    { nombre: 'Copa Buchanans 12', precio: 135 },
+    { nombre: 'Copa Buchanans 18', precio: 260 },
+    { nombre: 'Copa Martel VSOP', precio: 170 },
+    { nombre: 'Copa Red Label', precio: 90 },
+    { nombre: 'Copa Remmy Marti VSOP', precio: 140 }
+  ]},
+  vodka: { title: 'Vodka', items: [
+    { nombre: 'Botella Absolute Azul', precio: 850 },
+    { nombre: 'Botella Smirnoff', precio: 750 },
+    { nombre: 'Botella Smirnoff Tamarindo', precio: 750 },
+    { nombre: 'Copa Absolute Azul', precio: 80 },
+    { nombre: 'Copa Smirnoff', precio: 60 },
+    { nombre: 'Copa Smirnoff Tamarindo', precio: 60 }
+  ]},
+  vinos: { title: 'Vinos', items: [
+    { nombre: 'Botella Lambrusco Blanco', precio: 500 },
+    { nombre: 'Botella Lambrusco Rosa', precio: 500 },
+    { nombre: 'Botella Lambrusco Tinto', precio: 500 },
+    { nombre: 'Botella Tinto Las Moras', precio: 550 },
+    { nombre: 'Copa Lambrusco Blanco', precio: 95 },
+    { nombre: 'Copa Lambrusco Rosa', precio: 95 },
+    { nombre: 'Copa Lambrusco Tinto', precio: 95 },
+    { nombre: 'Copa Tinto Las Moras', precio: 120 }
+  ]},
+  cocteleria: { title: 'Cocteleria', items: [
+    { nombre: 'Dragon Loco', precio: 130 },
+    { nombre: 'Margarita al Gusto', variacion: 'Limon, Mango, Maracuya, Tamarindo', precio: 85 },
+    { nombre: 'Margarita Frutos Rojos', precio: 95 },
+    { nombre: 'Mojito al Gusto', variacion: 'Clasico, Fresa, Maracuya', precio: 85 },
+    { nombre: 'Mojito Frutos Rojos', precio: 95 },
+    { nombre: 'Embrocada', precio: 105 },
+    { nombre: 'Medias de Seda', precio: 95 },
+    { nombre: 'Mezcalita al Gusto', variacion: 'Limon, Mango, Maracuya, Tamarindo', precio: 85 },
+    { nombre: 'Mezcalita Frutos', precio: 95 },
+    { nombre: 'Oso Blanco', precio: 85 },
+    { nombre: 'Paloma', precio: 85 },
+    { nombre: 'Piña Colada', precio: 85 },
+    { nombre: 'Piñada', precio: 75 },
+    { nombre: 'Gin Tonic Maracuya', precio: 90 },
+    { nombre: 'Clericot', precio: 160 },
+    { nombre: 'Cazuela Doble Shot', precio: 95 },
+    { nombre: 'Carajillo', precio: 95 },
+    { nombre: 'Aiduky', precio: 95 }
+  ]},
+  postres: { title: 'Postres', items: [
+    { nombre: 'Helado Capuchino', precio: 65 },
+    { nombre: 'Helado Choco Chips', precio: 65 },
+    { nombre: 'Helado Chocolate', precio: 65 },
+    { nombre: 'Helado Elote', precio: 65 },
+    { nombre: 'Helado Frutos Rojos', precio: 65 },
+    { nombre: 'Helado Galleta', precio: 65 },
+    { nombre: 'Helado M&M\'s', precio: 65 },
+    { nombre: 'Helado Mazapan', precio: 65 },
+    { nombre: 'Helado Nuez', precio: 65 },
+    { nombre: 'Helado Nutella', precio: 65 },
+    { nombre: 'Helado Pie de Limon', precio: 65 },
+    { nombre: 'Flan', precio: 65 }
+  ]}
+})
 const menuLoading = ref(true)
 
 const loadMenu = async () => {
   try {
     const res = await fetch(`${API}/api/menu`)
-    if (res.ok) menuData.value = await res.json()
+    if (res.ok) {
+      const serverData = await res.json()
+      menuData.value = { ...menuData.value, ...serverData }
+    }
   } catch (e) {
     console.error('No se pudo cargar el menú:', e)
   } finally {
@@ -69,7 +318,7 @@ const loadMenu = async () => {
 }
 
 // --- Banners ---
-const banners = ref({ banner1: null, banner2: null, banner3: null })
+const banners = ref({ banner1: null, banner2: null, banner3: null, banner4: null, banner5: null })
 
 const loadBanners = async () => {
   try {
@@ -198,7 +447,7 @@ const formatName = (item) => {
   return text.toUpperCase()
 }
 
-const categories = ['entradas', 'cocteles', 'especialidades']
+const categories = ['entradas', 'cocteles', 'especialidades', 'torres', 'camarones', 'caldos', 'filetes', 'tostadas', 'cortes', 'marineritos', 'cerveza', 'refrescos', 'sinalcohol', 'mezcales', 'ron', 'brandy', 'bebidas', 'tequilas', 'whisky', 'vodka', 'vinos', 'cocteleria', 'postres']
 
 onMounted(() => {
   slideInterval = setInterval(nextSlide, 5000)
@@ -228,7 +477,7 @@ onUnmounted(() => {
           <!-- Spacer to center navigation -->
           <div class="ml-24 md:ml-36 flex-shrink-0 flex items-center">
           </div>
-          <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-8">
+          <div class="ml-auto flex items-center space-x-3 sm:space-x-8 text-sm sm:text-base">
             <a href="#inicio" class="text-slate-900 hover:text-[#38B6FF] inline-flex items-center px-1 pt-1 font-medium transition-colors">Inicio</a>
             <a href="#carta" class="text-slate-900 hover:text-[#38B6FF] inline-flex items-center px-1 pt-1 font-medium transition-colors">Carta</a>
             <a href="#contacto" class="text-slate-900 hover:text-[#38B6FF] inline-flex items-center px-1 pt-1 font-medium transition-colors">Contacto</a>
@@ -297,7 +546,7 @@ onUnmounted(() => {
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div class="text-center mb-12">
-          <h2 class="text-5xl md:text-7xl font-extrabold text-white italic tracking-wide" style="font-family: 'Brush Script MT', cursive, sans-serif;">Menú</h2>
+          <h2 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white italic tracking-wide" style="font-family: 'Brush Script MT', cursive, sans-serif;">Menú</h2>
           <p class="text-2xl text-slate-800 font-medium italic mt-2" style="font-family: 'Brush Script MT', cursive, sans-serif;">Alimentos</p>
         </div>
 
@@ -511,6 +760,954 @@ onUnmounted(() => {
           </div>
           
         </div>
+
+        <!-- ===== SEGUNDA PARTE DE LA CARTA ===== -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 mt-16">
+          <!-- Col 1 -->
+          <div class="flex flex-col space-y-12">
+            
+            <!-- torres -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'torres'" v-model="menuData.torres.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.torres.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'torres' ? saveCategory('torres') : toggleEdit('torres')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'torres' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'torres'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.torres.items" :key="'tor'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'torres'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('torres', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('torres', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'torres'" @click="openAddItem('torres')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- camarones -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'camarones'" v-model="menuData.camarones.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.camarones.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'camarones' ? saveCategory('camarones') : toggleEdit('camarones')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'camarones' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'camarones'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.camarones.items" :key="'cam'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'camarones'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('camarones', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('camarones', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'camarones'" @click="openAddItem('camarones')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- caldos -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'caldos'" v-model="menuData.caldos.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.caldos.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'caldos' ? saveCategory('caldos') : toggleEdit('caldos')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'caldos' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'caldos'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.caldos.items" :key="'cal'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'caldos'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('caldos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('caldos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'caldos'" @click="openAddItem('caldos')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- Banner banner4 -->
+            <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-4 group/banner">
+              <input :id="'banner-input-banner4'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner4', $event)" />
+              <div v-if="banners.banner4" class="w-full h-full">
+                <img :src="API + banners.banner4" class="w-full h-full object-cover" alt="Banner publicitario" />
+              </div>
+              <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
+                <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+              </div>
+              <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                <button @click="triggerBannerUpload('banner4')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
+                  <svg class="w-5 h-5 text-[#0F3057]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
+                <button v-if="banners.banner4" @click="deleteBanner('banner4')" class="w-12 h-12 bg-red-500/90 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Eliminar imagen">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Col 2 -->
+          <div class="flex flex-col space-y-12">
+            
+            <!-- filetes -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'filetes'" v-model="menuData.filetes.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.filetes.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'filetes' ? saveCategory('filetes') : toggleEdit('filetes')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'filetes' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'filetes'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.filetes.items" :key="'fil'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'filetes'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('filetes', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('filetes', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'filetes'" @click="openAddItem('filetes')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- tostadas -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'tostadas'" v-model="menuData.tostadas.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.tostadas.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'tostadas' ? saveCategory('tostadas') : toggleEdit('tostadas')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'tostadas' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'tostadas'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.tostadas.items" :key="'tos'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'tostadas'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('tostadas', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('tostadas', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'tostadas'" @click="openAddItem('tostadas')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- cortes -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'cortes'" v-model="menuData.cortes.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.cortes.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'cortes' ? saveCategory('cortes') : toggleEdit('cortes')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'cortes' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'cortes'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.cortes.items" :key="'cor'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'cortes'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('cortes', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('cortes', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'cortes'" @click="openAddItem('cortes')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- marineritos -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'marineritos'" v-model="menuData.marineritos.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.marineritos.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'marineritos' ? saveCategory('marineritos') : toggleEdit('marineritos')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'marineritos' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'marineritos'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.marineritos.items" :key="'mar'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'marineritos'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('marineritos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('marineritos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'marineritos'" @click="openAddItem('marineritos')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- Banner banner5 -->
+            <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-4 group/banner">
+              <input :id="'banner-input-banner5'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner5', $event)" />
+              <div v-if="banners.banner5" class="w-full h-full">
+                <img :src="API + banners.banner5" class="w-full h-full object-cover" alt="Banner publicitario" />
+              </div>
+              <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
+                <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
+              </div>
+              <div v-if="isLoggedIn" class="absolute inset-0 bg-black/30 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                <button @click="triggerBannerUpload('banner5')" class="w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Subir imagen">
+                  <svg class="w-5 h-5 text-[#0F3057]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
+                <button v-if="banners.banner5" @click="deleteBanner('banner5')" class="w-12 h-12 bg-red-500/90 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110" title="Eliminar imagen">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECCION BEBIDAS ===== -->
+        <div class="text-center mb-12 mt-28">
+          <h2 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white italic tracking-wide" style="font-family: 'Brush Script MT', cursive, sans-serif;">Menú</h2>
+          <p class="text-2xl text-slate-800 font-medium italic mt-2" style="font-family: 'Brush Script MT', cursive, sans-serif;">Bebidas & Postres</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
+          <!-- Columna 1 -->
+          <div class="flex flex-col space-y-12">
+            
+            <!-- cerveza -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'cerveza'" v-model="menuData.cerveza.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.cerveza.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'cerveza' ? saveCategory('cerveza') : toggleEdit('cerveza')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'cerveza' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'cerveza'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.cerveza.items" :key="'cer'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'cerveza'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('cerveza', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('cerveza', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'cerveza'" @click="openAddItem('cerveza')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- refrescos -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'refrescos'" v-model="menuData.refrescos.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.refrescos.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'refrescos' ? saveCategory('refrescos') : toggleEdit('refrescos')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'refrescos' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'refrescos'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.refrescos.items" :key="'ref'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'refrescos'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('refrescos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('refrescos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'refrescos'" @click="openAddItem('refrescos')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- sinalcohol -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'sinalcohol'" v-model="menuData.sinalcohol.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.sinalcohol.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'sinalcohol' ? saveCategory('sinalcohol') : toggleEdit('sinalcohol')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'sinalcohol' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'sinalcohol'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.sinalcohol.items" :key="'sin'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'sinalcohol'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('sinalcohol', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('sinalcohol', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'sinalcohol'" @click="openAddItem('sinalcohol')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- mezcales -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'mezcales'" v-model="menuData.mezcales.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.mezcales.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'mezcales' ? saveCategory('mezcales') : toggleEdit('mezcales')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'mezcales' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'mezcales'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.mezcales.items" :key="'mez'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'mezcales'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('mezcales', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('mezcales', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'mezcales'" @click="openAddItem('mezcales')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- ron -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'ron'" v-model="menuData.ron.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.ron.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'ron' ? saveCategory('ron') : toggleEdit('ron')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'ron' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'ron'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.ron.items" :key="'ron'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'ron'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('ron', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('ron', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'ron'" @click="openAddItem('ron')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- brandy -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'brandy'" v-model="menuData.brandy.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.brandy.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'brandy' ? saveCategory('brandy') : toggleEdit('brandy')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'brandy' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'brandy'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.brandy.items" :key="'bra'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'brandy'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('brandy', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('brandy', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'brandy'" @click="openAddItem('brandy')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+          </div>
+          <!-- Columna 2 -->
+          <div class="flex flex-col space-y-12">
+            
+            <!-- bebidas -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'bebidas'" v-model="menuData.bebidas.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.bebidas.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'bebidas' ? saveCategory('bebidas') : toggleEdit('bebidas')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'bebidas' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'bebidas'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.bebidas.items" :key="'beb'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'bebidas'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('bebidas', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('bebidas', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'bebidas'" @click="openAddItem('bebidas')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- tequilas -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'tequilas'" v-model="menuData.tequilas.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.tequilas.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'tequilas' ? saveCategory('tequilas') : toggleEdit('tequilas')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'tequilas' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'tequilas'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.tequilas.items" :key="'teq'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'tequilas'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('tequilas', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('tequilas', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'tequilas'" @click="openAddItem('tequilas')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- whisky -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'whisky'" v-model="menuData.whisky.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.whisky.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'whisky' ? saveCategory('whisky') : toggleEdit('whisky')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'whisky' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'whisky'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.whisky.items" :key="'whi'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'whisky'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('whisky', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('whisky', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'whisky'" @click="openAddItem('whisky')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+          </div>
+          <!-- Columna 3 -->
+          <div class="flex flex-col space-y-12">
+            
+            <!-- vodka -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'vodka'" v-model="menuData.vodka.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.vodka.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'vodka' ? saveCategory('vodka') : toggleEdit('vodka')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'vodka' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'vodka'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.vodka.items" :key="'vod'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'vodka'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('vodka', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('vodka', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'vodka'" @click="openAddItem('vodka')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- vinos -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'vinos'" v-model="menuData.vinos.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.vinos.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'vinos' ? saveCategory('vinos') : toggleEdit('vinos')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'vinos' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'vinos'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.vinos.items" :key="'vin'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'vinos'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('vinos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('vinos', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'vinos'" @click="openAddItem('vinos')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+            
+            <!-- cocteleria -->
+            <div>
+              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+                <input v-if="editingCategory === 'cocteleria'" v-model="menuData.cocteleria.title"
+                  class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
+                <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
+                  {{ menuData.cocteleria.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'cocteleria' ? saveCategory('cocteleria') : toggleEdit('cocteleria')"
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'cocteleria' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'cocteleria'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-2">
+                <li v-for="(item, index) in menuData.cocteleria.items" :key="'coc'+index" class="flex flex-col">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
+                    <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-xs font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-bold text-lg md:text-xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'cocteleria'" class="flex items-center gap-1 shrink-0">
+                      <button @click="openEditItem('cocteleria', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-blue-400/60 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('cocteleria', index)" class="w-6 h-6 rounded flex items-center justify-center bg-white/20 hover:bg-red-500/70 text-white transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'cocteleria'" @click="openAddItem('cocteleria')"
+                class="mt-4 w-full border-2 border-dashed border-white/40 rounded-xl py-2 text-white/70 hover:text-white hover:border-white/70 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar platillo
+              </button>
+            </div>
+
+                        <!-- postres -->
+            <div class="bg-[#E65100] rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative overflow-hidden transition-all duration-300 transform hover:scale-[1.02]">
+              <!-- Decoración interna -->
+              <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10 pointer-events-none"></div>
+              <div class="absolute bottom-0 left-0 -ml-12 -mb-12 w-48 h-48 rounded-full bg-white opacity-5 pointer-events-none"></div>
+              
+              <div class="flex items-center gap-3 mb-8 justify-center relative z-10">
+                <input v-if="editingCategory === 'postres'" v-model="menuData.postres.title"
+                  class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider bg-transparent border-b-2 border-white/50 outline-none w-full text-center placeholder-white/50" />
+                <h3 v-else class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider text-center drop-shadow-md">
+                  {{ menuData.postres.title }}
+                </h3>
+                <button v-if="isLoggedIn" @click="editingCategory === 'postres' ? saveCategory('postres') : toggleEdit('postres')"
+                  class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200"
+                  :class="editingCategory === 'postres' ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white hover:bg-white/40'">
+                  <svg v-if="editingCategory !== 'postres'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+              </div>
+              <ul class="space-y-3 relative z-10">
+                <li v-for="(item, index) in menuData.postres.items" :key="'pos'+index" class="flex flex-col group/item">
+                  <div class="flex justify-between items-center border-b border-white/20 pb-2 gap-4 transition-colors group-hover/item:border-white/40">
+                    <div class="text-white font-bold text-xl md:text-2xl font-sans tracking-tight flex-1">
+                      {{ formatName(item) }}
+                      <span v-if="item.variacion" class="text-sm font-normal text-white/80 block -mt-1">({{ item.variacion.toUpperCase() }})</span>
+                    </div>
+                    <div class="text-white font-black text-2xl md:text-3xl font-sans shrink-0">
+                      {{ typeof item.precio === 'number' ? '$' + item.precio : item.precio }}
+                    </div>
+                    <div v-if="editingCategory === 'postres'" class="flex items-center gap-2 shrink-0">
+                      <button @click="openEditItem('postres', index)" class="w-8 h-8 rounded-full flex items-center justify-center bg-white/20 hover:bg-blue-400 text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      </button>
+                      <button @click="deleteItem('postres', index)" class="w-8 h-8 rounded-full flex items-center justify-center bg-white/20 hover:bg-red-500 text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button v-if="editingCategory === 'postres'" @click="openAddItem('postres')"
+                class="mt-6 w-full border-2 border-dashed border-white/50 rounded-xl py-3 text-white hover:bg-white/10 transition-colors text-base font-bold flex items-center justify-center gap-2 relative z-10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Agregar Postre
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -588,7 +1785,7 @@ onUnmounted(() => {
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto items-center">
           
           <!-- Instagram -->
-          <a href="#" class="group flex flex-col items-center p-4 hover:-translate-y-2 transition-transform duration-300">
+          <a href="https://www.instagram.com/elmarinero.loco?utm_source=qr" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-4 hover:-translate-y-2 transition-transform duration-300">
             <div class="w-16 h-16 mb-4 text-slate-800 group-hover:text-[#E1306C] transition-colors">
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -600,7 +1797,7 @@ onUnmounted(() => {
           </a>
 
           <!-- Facebook -->
-          <a href="#" class="group flex flex-col items-center p-4 hover:-translate-y-2 transition-transform duration-300">
+          <a href="https://www.facebook.com/share/1ER3v8Kv1K/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-4 hover:-translate-y-2 transition-transform duration-300">
             <div class="w-16 h-16 mb-4 text-slate-800 group-hover:text-[#1877F2] transition-colors">
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
@@ -610,7 +1807,7 @@ onUnmounted(() => {
           </a>
 
           <!-- Google Maps -->
-          <a href="#" class="group flex flex-col items-center p-4 hover:-translate-y-2 transition-transform duration-300">
+          <a href="https://maps.app.goo.gl/CLKYXygMrEUdfzdS7?g_st=ic" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-4 hover:-translate-y-2 transition-transform duration-300">
             <div class="w-16 h-16 mb-4 text-slate-800 group-hover:text-[#EA4335] transition-colors">
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -621,14 +1818,14 @@ onUnmounted(() => {
           </a>
 
           <!-- Email -->
-          <a href="mailto:hola@elmarineroloco.com" class="group flex flex-col items-center p-4 hover:-translate-y-2 transition-transform duration-300">
-            <div class="w-16 h-16 mb-4 text-slate-800 group-hover:text-[#38B6FF] transition-colors">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
+          <!-- TikTok -->
+          <a href="https://www.tiktok.com/@elmarineroloco?_r=1&_t=ZS-96y18ECYJ5Y" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-4 hover:-translate-y-2 transition-transform duration-300">
+            <div class="w-16 h-16 mb-4 text-slate-800 group-hover:text-[#010101] transition-colors">
+              <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.95a8.16 8.16 0 0 0 4.77 1.52V7.01a4.85 4.85 0 0 1-1-.32z"/>
               </svg>
             </div>
-            <span class="text-slate-600 font-medium group-hover:text-slate-900">Correo</span>
+            <span class="text-slate-600 font-medium group-hover:text-slate-900">TikTok</span>
           </a>
 
         </div>
