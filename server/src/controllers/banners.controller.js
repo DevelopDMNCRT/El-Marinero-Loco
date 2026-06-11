@@ -45,7 +45,7 @@ const uploadBanner = [
       if (!req.file) return res.status(400).json({ error: 'No se recibió ninguna imagen.' })
       const { id } = req.params
       const banners = readBanners()
-      if (!(id in banners)) return res.status(404).json({ error: 'Banner no encontrado.' })
+      // No longer failing if id is not in banners.json. We just add it!
 
       // Cloudinary devuelve la URL segura en req.file.path
       const url = req.file.path
@@ -65,7 +65,7 @@ const deleteBanner = async (req, res) => {
   try {
     const { id } = req.params
     const banners = readBanners()
-    if (!(id in banners)) return res.status(404).json({ error: 'Banner no encontrado.' })
+    // If not found, it doesn't matter, we'll just set it to null anyway
 
     const url = banners[id]
     if (url && url.includes('cloudinary')) {
