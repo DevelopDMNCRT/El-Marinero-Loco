@@ -445,7 +445,7 @@ onUnmounted(() => {
             </button>
 
             <!-- Banner 1 -->
-            <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-10 group/banner">
+            <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-2 mb-2 group/banner">
               <!-- Hidden file input -->
               <input :id="'banner-input-banner1'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner1', $event)" />
               
@@ -473,7 +473,7 @@ onUnmounted(() => {
           </div>
 
           <!-- Column 2: Cocteles & Especialidades -->
-          <div class="flex flex-col space-y-6">
+          <div class="flex flex-col space-y-0">
 
             <!-- Cocteles -->
             <div>
@@ -520,7 +520,7 @@ onUnmounted(() => {
               </button>
 
               <!-- Banner 2 -->
-              <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-10 group/banner">
+              <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-2 mb-2 group/banner">
                 <input :id="'banner-input-banner2'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner2', $event)" />
                 <div v-if="banners.banner2" class="w-full h-full">
                   <img :src="banners.banner2.startsWith('http') ? banners.banner2 : API + banners.banner2" class="w-full h-full object-cover" alt="Banner publicitario 2" />
@@ -587,7 +587,7 @@ onUnmounted(() => {
               </button>
 
               <!-- Banner 3 -->
-              <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-10 group/banner">
+              <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-2 mb-2 group/banner">
                 <input :id="'banner-input-banner3'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner3', $event)" />
                 <div v-if="banners.banner3" class="w-full h-full">
                   <img :src="banners.banner3.startsWith('http') ? banners.banner3 : API + banners.banner3" class="w-full h-full object-cover" alt="Banner publicitario 3" />
@@ -615,7 +615,7 @@ onUnmounted(() => {
         <!-- ===== SEGUNDA PARTE DE LA CARTA ===== -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6 mt-8">
           <!-- Col 1 -->
-          <div class="flex flex-col space-y-6">
+          <div class="flex flex-col space-y-0">
             
             <!-- torres -->
             <div>
@@ -772,7 +772,7 @@ onUnmounted(() => {
             </div>
           </div>
           <!-- Col 2 -->
-          <div class="flex flex-col space-y-6">
+          <div class="flex flex-col space-y-0">
             
             <!-- filetes -->
             <div>
@@ -982,7 +982,7 @@ onUnmounted(() => {
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-8">
           <!-- Columna 1 -->
-          <div class="flex flex-col space-y-6">
+          <div class="flex flex-col space-y-0">
             
             <!-- cerveza -->
             <div>
@@ -1249,7 +1249,7 @@ onUnmounted(() => {
 
           </div>
           <!-- Columna 2 -->
-          <div class="flex flex-col space-y-6">
+          <div class="flex flex-col space-y-0">
             
             <!-- bebidas -->
             <div>
@@ -1384,7 +1384,7 @@ onUnmounted(() => {
 
           </div>
           <!-- Columna 3 -->
-          <div class="flex flex-col space-y-6">
+          <div class="flex flex-col space-y-0">
             
             <!-- vodka -->
             <div>
