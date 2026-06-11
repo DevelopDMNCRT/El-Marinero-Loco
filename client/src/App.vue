@@ -451,7 +451,7 @@ onUnmounted(() => {
               
               <!-- Image or placeholder -->
               <div v-if="banners.banner1" class="w-full h-full">
-                <img :src="API + banners.banner1" class="w-full h-full object-cover" alt="Banner publicitario 1" />
+                <img :src="banners.banner1.startsWith('http') ? banners.banner1 : API + banners.banner1" class="w-full h-full object-cover" alt="Banner publicitario 1" />
               </div>
               <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
                 <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
@@ -520,7 +520,7 @@ onUnmounted(() => {
               <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-10 group/banner">
                 <input :id="'banner-input-banner2'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner2', $event)" />
                 <div v-if="banners.banner2" class="w-full h-full">
-                  <img :src="API + banners.banner2" class="w-full h-full object-cover" alt="Banner publicitario 2" />
+                  <img :src="banners.banner2.startsWith('http') ? banners.banner2 : API + banners.banner2" class="w-full h-full object-cover" alt="Banner publicitario 2" />
                 </div>
                 <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
                   <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
@@ -584,7 +584,7 @@ onUnmounted(() => {
               <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-10 group/banner">
                 <input :id="'banner-input-banner3'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner3', $event)" />
                 <div v-if="banners.banner3" class="w-full h-full">
-                  <img :src="API + banners.banner3" class="w-full h-full object-cover" alt="Banner publicitario 3" />
+                  <img :src="banners.banner3.startsWith('http') ? banners.banner3 : API + banners.banner3" class="w-full h-full object-cover" alt="Banner publicitario 3" />
                 </div>
                 <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
                   <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
@@ -744,7 +744,7 @@ onUnmounted(() => {
             <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-4 group/banner">
               <input :id="'banner-input-banner4'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner4', $event)" />
               <div v-if="banners.banner4" class="w-full h-full">
-                <img :src="API + banners.banner4" class="w-full h-full object-cover" alt="Banner publicitario" />
+                <img :src="banners.banner4.startsWith('http') ? banners.banner4 : API + banners.banner4" class="w-full h-full object-cover" alt="Banner publicitario" />
               </div>
               <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
                 <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>
@@ -942,7 +942,7 @@ onUnmounted(() => {
             <div class="relative w-full h-32 md:h-40 rounded-xl overflow-hidden mt-4 group/banner">
               <input :id="'banner-input-banner5'" type="file" accept="image/*" class="hidden" @change="onBannerFileChange('banner5', $event)" />
               <div v-if="banners.banner5" class="w-full h-full">
-                <img :src="API + banners.banner5" class="w-full h-full object-cover" alt="Banner publicitario" />
+                <img :src="banners.banner5.startsWith('http') ? banners.banner5 : API + banners.banner5" class="w-full h-full object-cover" alt="Banner publicitario" />
               </div>
               <div v-else class="w-full h-full bg-slate-300 border-2 border-dashed border-slate-400 flex items-center justify-center shadow-inner">
                 <span class="text-slate-500 font-bold uppercase tracking-widest text-sm md:text-base">Espacio Publicitario</span>

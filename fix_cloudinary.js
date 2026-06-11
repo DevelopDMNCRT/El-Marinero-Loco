@@ -1,4 +1,7 @@
-const fs = require('fs')
+const fs = require('fs');
+const file = '/Users/yaywiin/Desktop/DEVELOP/el-marinero-loco/server/src/controllers/banners.controller.js';
+
+let content = `const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
 const cloudinary = require('cloudinary').v2;
@@ -71,7 +74,7 @@ const deleteBanner = async (req, res) => {
     if (url && url.includes('cloudinary')) {
       // Extraer public_id de la URL de Cloudinary para eliminarlo
       // Normalmente el path completo es la carpeta + public_id
-      const publicId = `el-marinero-loco/banners/${id}`
+      const publicId = \`el-marinero-loco/banners/\${id}\`
       await cloudinary.uploader.destroy(publicId)
     }
 
@@ -86,3 +89,7 @@ const deleteBanner = async (req, res) => {
 }
 
 module.exports = { getBanners, uploadBanner, deleteBanner }
+`;
+
+fs.writeFileSync(file, content);
+console.log("Cloudinary backend integratons added.");
