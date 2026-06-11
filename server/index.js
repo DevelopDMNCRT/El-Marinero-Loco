@@ -9,13 +9,13 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 // Middleware
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:4173'],
-  credentials: true
-}))
+app.use(cors()) // Allow all origins for easier deployment
 app.use(express.json())
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('El Marinero Loco API is running! 🦞');
+});
 app.use('/api/auth', authRoutes)
 app.use('/api/menu', menuRoutes)
 app.use('/api/banners', bannersRoutes)
