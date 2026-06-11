@@ -392,12 +392,12 @@ onUnmounted(() => {
           <p class="text-2xl text-slate-800 font-medium italic mt-2" style="font-family: 'Brush Script MT', cursive, sans-serif;">Alimentos</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-6">
           
           <!-- Column 1: Entradas -->
           <div>
             <!-- Category Header -->
-            <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+            <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
               <input v-if="editingCategory === 'entradas'" v-model="menuData.entradas.title"
                 class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md"
                 style="[text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]" />
@@ -413,7 +413,7 @@ onUnmounted(() => {
               </button>
             </div>
 
-            <ul class="space-y-2">
+            <ul class="space-y-0">
               <li v-for="(item, index) in menuData.entradas.items" :key="'ent-'+index" class="group/row flex flex-col">
                 <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2"
                   :class="editingCategory === 'entradas' ? 'hover:bg-white/5 rounded px-1 cursor-pointer' : ''">
@@ -470,11 +470,11 @@ onUnmounted(() => {
           </div>
 
           <!-- Column 2: Cocteles & Especialidades -->
-          <div class="flex flex-col space-y-12">
+          <div class="flex flex-col space-y-6">
 
             <!-- Cocteles -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'cocteles'" v-model="menuData.cocteles.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -488,7 +488,7 @@ onUnmounted(() => {
                 </button>
               </div>
 
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.cocteles.items" :key="'coc-'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -538,7 +538,7 @@ onUnmounted(() => {
 
             <!-- Especialidades -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'especialidades'" v-model="menuData.especialidades.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -552,7 +552,7 @@ onUnmounted(() => {
                 </button>
               </div>
 
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.especialidades.items" :key="'esp-'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -604,13 +604,13 @@ onUnmounted(() => {
         </div>
 
         <!-- ===== SEGUNDA PARTE DE LA CARTA ===== -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 mt-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6 mt-8">
           <!-- Col 1 -->
-          <div class="flex flex-col space-y-12">
+          <div class="flex flex-col space-y-6">
             
             <!-- torres -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'torres'" v-model="menuData.torres.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -623,7 +623,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.torres.items" :key="'tor'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -654,7 +654,7 @@ onUnmounted(() => {
             
             <!-- camarones -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'camarones'" v-model="menuData.camarones.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -667,7 +667,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.camarones.items" :key="'cam'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -698,7 +698,7 @@ onUnmounted(() => {
             
             <!-- caldos -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'caldos'" v-model="menuData.caldos.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -711,7 +711,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.caldos.items" :key="'cal'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -760,11 +760,11 @@ onUnmounted(() => {
             </div>
           </div>
           <!-- Col 2 -->
-          <div class="flex flex-col space-y-12">
+          <div class="flex flex-col space-y-6">
             
             <!-- filetes -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'filetes'" v-model="menuData.filetes.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -777,7 +777,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.filetes.items" :key="'fil'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -808,7 +808,7 @@ onUnmounted(() => {
             
             <!-- tostadas -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'tostadas'" v-model="menuData.tostadas.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -821,7 +821,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.tostadas.items" :key="'tos'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -852,7 +852,7 @@ onUnmounted(() => {
             
             <!-- cortes -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'cortes'" v-model="menuData.cortes.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -865,7 +865,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.cortes.items" :key="'cor'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -896,7 +896,7 @@ onUnmounted(() => {
             
             <!-- marineritos -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'marineritos'" v-model="menuData.marineritos.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -909,7 +909,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.marineritos.items" :key="'mar'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -965,13 +965,13 @@ onUnmounted(() => {
           <p class="text-2xl text-slate-800 font-medium italic mt-2" style="font-family: 'Brush Script MT', cursive, sans-serif;">Bebidas & Postres</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-8">
           <!-- Columna 1 -->
-          <div class="flex flex-col space-y-12">
+          <div class="flex flex-col space-y-6">
             
             <!-- cerveza -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'cerveza'" v-model="menuData.cerveza.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -984,7 +984,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.cerveza.items" :key="'cer'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1015,7 +1015,7 @@ onUnmounted(() => {
             
             <!-- refrescos -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'refrescos'" v-model="menuData.refrescos.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1028,7 +1028,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.refrescos.items" :key="'ref'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1059,7 +1059,7 @@ onUnmounted(() => {
             
             <!-- sinalcohol -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'sinalcohol'" v-model="menuData.sinalcohol.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1072,7 +1072,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.sinalcohol.items" :key="'sin'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1103,7 +1103,7 @@ onUnmounted(() => {
             
             <!-- mezcales -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'mezcales'" v-model="menuData.mezcales.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1116,7 +1116,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.mezcales.items" :key="'mez'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1147,7 +1147,7 @@ onUnmounted(() => {
             
             <!-- ron -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'ron'" v-model="menuData.ron.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1160,7 +1160,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.ron.items" :key="'ron'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1191,7 +1191,7 @@ onUnmounted(() => {
             
             <!-- brandy -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'brandy'" v-model="menuData.brandy.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1204,7 +1204,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.brandy.items" :key="'bra'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1234,11 +1234,11 @@ onUnmounted(() => {
 
           </div>
           <!-- Columna 2 -->
-          <div class="flex flex-col space-y-12">
+          <div class="flex flex-col space-y-6">
             
             <!-- bebidas -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'bebidas'" v-model="menuData.bebidas.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1251,7 +1251,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.bebidas.items" :key="'beb'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1282,7 +1282,7 @@ onUnmounted(() => {
             
             <!-- tequilas -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'tequilas'" v-model="menuData.tequilas.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1295,7 +1295,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.tequilas.items" :key="'teq'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1326,7 +1326,7 @@ onUnmounted(() => {
             
             <!-- whisky -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'whisky'" v-model="menuData.whisky.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1339,7 +1339,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.whisky.items" :key="'whi'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1369,11 +1369,11 @@ onUnmounted(() => {
 
           </div>
           <!-- Columna 3 -->
-          <div class="flex flex-col space-y-12">
+          <div class="flex flex-col space-y-6">
             
             <!-- vodka -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'vodka'" v-model="menuData.vodka.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1386,7 +1386,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.vodka.items" :key="'vod'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1417,7 +1417,7 @@ onUnmounted(() => {
             
             <!-- vinos -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'vinos'" v-model="menuData.vinos.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1430,7 +1430,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.vinos.items" :key="'vin'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1461,7 +1461,7 @@ onUnmounted(() => {
             
             <!-- cocteleria -->
             <div>
-              <div class="flex items-center gap-3 mb-6 justify-center lg:justify-start">
+              <div class="flex items-center gap-3 mb-2 justify-center lg:justify-start">
                 <input v-if="editingCategory === 'cocteleria'" v-model="menuData.cocteleria.title"
                   class="text-4xl font-black text-[#E65100] uppercase tracking-wider bg-transparent border-b-2 border-[#E65100] outline-none w-full drop-shadow-md" />
                 <h3 v-else class="text-4xl font-black text-[#E65100] uppercase tracking-wider drop-shadow-md [text-shadow:_1px_1px_2px_rgb(0_0_0_/_40%)]">
@@ -1474,7 +1474,7 @@ onUnmounted(() => {
                   <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-2">
+              <ul class="space-y-0">
                 <li v-for="(item, index) in menuData.cocteleria.items" :key="'coc'+index" class="flex flex-col">
                   <div class="flex justify-between items-center border-b border-white/20 pb-1 gap-2">
                     <div class="text-white font-semibold text-lg md:text-xl font-sans tracking-tight flex-1">
@@ -1508,7 +1508,7 @@ onUnmounted(() => {
               <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10 pointer-events-none"></div>
               <div class="absolute bottom-0 left-0 -ml-12 -mb-12 w-48 h-48 rounded-full bg-white opacity-5 pointer-events-none"></div>
               
-              <div class="flex items-center gap-3 mb-8 justify-center relative z-10">
+              <div class="flex items-center gap-3 mb-4 justify-center relative z-10">
                 <input v-if="editingCategory === 'postres'" v-model="menuData.postres.title"
                   class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider bg-transparent border-b-2 border-white/50 outline-none w-full text-center placeholder-white/50" />
                 <h3 v-else class="text-3xl md:text-5xl font-black text-white uppercase tracking-wider text-center drop-shadow-md">
@@ -1521,7 +1521,7 @@ onUnmounted(() => {
                   <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </button>
               </div>
-              <ul class="space-y-3 relative z-10">
+              <ul class="space-y-1 relative z-10">
                 <li v-for="(item, index) in menuData.postres.items" :key="'pos'+index" class="flex flex-col group/item">
                   <div class="flex justify-between items-center border-b border-white/20 pb-2 gap-4 transition-colors group-hover/item:border-white/40">
                     <div class="text-white font-bold text-xl md:text-2xl font-sans tracking-tight flex-1">
