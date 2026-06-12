@@ -1,8 +1,7 @@
-const fs = require('fs')
-const path = require('path')
 const multer = require('multer')
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const db = require('../db/index')
 
 // Configuración de Cloudinary
 cloudinary.config({
@@ -10,8 +9,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
-
-const BANNERS_DATA = path.join(__dirname, '../data/banners.json')
 
 // Configuración de almacenamiento en Cloudinary
 const storage = new CloudinaryStorage({
@@ -25,32 +22,35 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } })
 
-const readBanners = () => JSON.parse(fs.readFileSync(BANNERS_DATA, 'utf-8'))
-const writeBanners = (data) => fs.writeFileSync(BANNERS_DATA, JSON.stringify(data, null, 2))
-
 // GET /api/banners
-const getBanners = (req, res) => {
+const getBanners = async (req, res) => {
   try {
-    res.json(readBanners())
+    const result = await db.query('SELECT * FROM banners')
+    const banners = {}
+    result.rows.forEach(row => {
+      banners[row.id] = row.url
+    })
+    res.json(banners)
   } catch (e) {
-    res.status(500).json({ error: 'No se pudieron leer los banners.' })
+    console.error('getBanners error:', e)
+    res.status(500).json({ error: 'No se pudieron leer los banners de la base de datos.' })
   }
 }
 
 // POST /api/banners/:id  (upload image)
 const uploadBanner = [
   upload.single('image'),
-  (req, res) => {
+  async (req, res) => {
     try {
       if (!req.file) return res.status(400).json({ error: 'No se recibió ninguna imagen.' })
       const { id } = req.params
-      const banners = readBanners()
-      // No longer failing if id is not in banners.json. We just add it!
-
-      // Cloudinary devuelve la URL segura en req.file.path
       const url = req.file.path
-      banners[id] = url
-      writeBanners(banners)
+
+      // Guardar URL segura de Cloudinary en la base de datos (UPSERT por seguridad)
+      await db.query(
+        'INSERT INTO banners (id, url) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET url = $2',
+        [id, url]
+      )
 
       res.json({ message: 'Banner actualizado.', url })
     } catch (e) {
@@ -64,19 +64,22 @@ const uploadBanner = [
 const deleteBanner = async (req, res) => {
   try {
     const { id } = req.params
-    const banners = readBanners()
-    // If not found, it doesn't matter, we'll just set it to null anyway
-
-    const url = banners[id]
-    if (url && url.includes('cloudinary')) {
-      // Extraer public_id de la URL de Cloudinary para eliminarlo
-      // Normalmente el path completo es la carpeta + public_id
-      const publicId = `El Marinero Loco/${id}`
-      await cloudinary.uploader.destroy(publicId)
+    const result = await db.query('SELECT url FROM banners WHERE id = $1', [id])
+    
+    if (result.rows.length > 0) {
+      const url = result.rows[0].url
+      if (url && url.includes('cloudinary')) {
+        // Extraer public_id de la URL de Cloudinary para eliminarlo
+        const publicId = `El Marinero Loco/${id}`
+        await cloudinary.uploader.destroy(publicId)
+      }
     }
 
-    banners[id] = null
-    writeBanners(banners)
+    // Set URL to null in database
+    await db.query(
+      'INSERT INTO banners (id, url) VALUES ($1, null) ON CONFLICT (id) DO UPDATE SET url = null',
+      [id]
+    )
 
     res.json({ message: 'Banner eliminado.' })
   } catch (e) {
